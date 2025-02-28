@@ -10,6 +10,8 @@ fun CatDto.toCat(): Cat {
         description = description,
         weight = weight.metric,
         lifeSpan = lifeSpan,
-        imageUrl = image.url
+        imageUrl = image.url,
+        imageHeight = image.height,
+        imageWidth = image.width
     )
 }

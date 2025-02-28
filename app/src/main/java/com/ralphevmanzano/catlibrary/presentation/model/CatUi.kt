@@ -8,7 +8,9 @@ data class CatUi(
     val description: String,
     val weightFormatted: String,
     val lifeSpanFormatted: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val imageHeight: Int,
+    val imageWidth: Int
 )
 
 fun Cat.toUi(): CatUi {
@@ -18,6 +20,8 @@ fun Cat.toUi(): CatUi {
         description = description,
         weightFormatted = "$weight kg",
         lifeSpanFormatted = "$lifeSpan yrs",
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
+        imageHeight = imageHeight,
+        imageWidth = imageWidth
     )
 }
