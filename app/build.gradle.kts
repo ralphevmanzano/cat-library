@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.compose.debug)
 
+    implementation(libs.navigation.compose)
+
     implementation(libs.bundles.koin)
 
     implementation(libs.bundles.retrofit)
@@ -87,6 +89,9 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
 
     implementation(libs.bundles.room)
+    implementation(libs.androidx.work)
+
+    implementation(libs.bundles.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

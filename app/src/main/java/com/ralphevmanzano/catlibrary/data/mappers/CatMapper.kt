@@ -10,8 +10,10 @@ fun CatDto.toCat(): Cat {
         description = description,
         weight = weight.metric,
         lifeSpan = lifeSpan,
-        imageUrl = image.url,
-        imageHeight = image.height,
-        imageWidth = image.width
+        imageUrl = image?.url.orEmpty().ifEmpty {
+            "https://cdn2.thecatapi.com/images/${referenceImageId}.jpg"
+        },
+        imageHeight = image?.height ?: 0,
+        imageWidth = image?.width ?: 0
     )
 }

@@ -1,6 +1,7 @@
 package com.ralphevmanzano.catlibrary.di
 
 import com.ralphevmanzano.catlibrary.BuildConfig
+import com.ralphevmanzano.catlibrary.data.remote.ApiKeyInterceptor
 import com.ralphevmanzano.catlibrary.data.remote.CatService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -28,12 +29,13 @@ val networkModule = module {
                         }
                     )
                 }
+                addNetworkInterceptor(ApiKeyInterceptor())
             }.build()
     }
 
     single {
         Retrofit.Builder()
-            .baseUrl("https://api.thecatapi.com/v1")
+            .baseUrl("https://api.thecatapi.com/v1/")
             .client(get())
             .addConverterFactory(get<Json>().asConverterFactory("application/json".toMediaType()))
             .build()

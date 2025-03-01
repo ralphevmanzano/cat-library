@@ -6,4 +6,5 @@ import com.ralphevmanzano.catlibrary.domain.model.networking.Result
 
 interface CatRepository {
     suspend fun getCats(): Result<List<Cat>, NetworkError>
+    suspend fun getCatDetails(id: String): Result<Cat, NetworkError>
 }

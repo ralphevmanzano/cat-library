@@ -1,4 +1,4 @@
-package com.ralphevmanzano.catlibrary.data.datasource
+package com.ralphevmanzano.catlibrary.data.repository.datasource
 
 import com.ralphevmanzano.catlibrary.data.mappers.toCat
 import com.ralphevmanzano.catlibrary.data.remote.CatService
@@ -12,7 +12,11 @@ class CatRemoteDataSource(private val catService: CatService) {
 
     suspend fun getCats(): Result<List<Cat>, NetworkError> {
         return safeCall { catService.getCats() }.map { response ->
-            response.map { it.toCat() }
+            response.filter { it.image != null }.map { it.toCat() }
         }
+    }
+
+    suspend fun getCatDetails(id: String): Result<Cat, NetworkError> {
+        return safeCall { catService.getCatDetails(id) }.map { it.toCat() }
     }
 }
