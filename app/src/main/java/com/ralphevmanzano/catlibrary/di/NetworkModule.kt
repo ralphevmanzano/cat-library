@@ -38,7 +38,7 @@ fun provideOkHttpClient(): OkHttpClient {
 
 fun provideCatRetrofit(): Retrofit {
     return Retrofit.Builder()
-        .baseUrl("https://api.thecatapi.com/v1/")
+        .baseUrl(BuildConfig.CAT_API_BASE_URL)
         .client(provideOkHttpClient())
         .addConverterFactory(provideJson().asConverterFactory("application/json".toMediaType()))
         .build()
@@ -50,7 +50,7 @@ fun provideCatService(retrofit: Retrofit): CatService {
 
 fun provideImageRetrofit(): Retrofit {
     return Retrofit.Builder()
-        .baseUrl("https://cdn2.thecatapi.com/images/")
+        .baseUrl(BuildConfig.CAT_API_IMAGES_CDN)
         .build()
 }
 

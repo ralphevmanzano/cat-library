@@ -35,12 +35,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "CAT_API_BASE_URL", "\"https://api.thecatapi.com/v1/\"")
+            buildConfigField("String", "CAT_API_IMAGES_CDN", "\"https://cdn2.thecatapi.com/images/\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "CAT_API_BASE_URL", "\"https://api.thecatapi.com/v1/\"")
+            buildConfigField("String", "CAT_API_IMAGES_CDN", "\"https://cdn2.thecatapi.com/images/\"")
         }
     }
     compileOptions {
