@@ -1,5 +1,6 @@
 package com.ralphevmanzano.catlibrary.data.worker
 
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -39,18 +40,23 @@ class ImageDownloadWorker(
         const val KEY_FILE_NAME = "file_name"
         const val PROGRESS = "Progress"
         const val DOWNLOAD_PROGRESS_NOTIFICATION_ID = 1
-        const val DOWNLOAD_COMPLETE_NOTIFICATION_ID = 2
         const val CHANNEL_ID = "download_channel"
     }
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+    init {
+        createNotificationChannel()
+    }
+
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return createForegroundInfo(0)
+    }
+
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            createNotificationChannel()
-
-            setForeground(createForegroundInfo(0))
+            safelySetForeground(createForegroundInfo(0))
 
             val imageUrl = inputData.getString(KEY_IMAGE_URL) ?: return@withContext Result.failure()
             val fileName = inputData.getString(KEY_FILE_NAME) ?: "downloaded_image.jpg"
@@ -99,7 +105,7 @@ class ImageDownloadWorker(
 
                     // Calculate progress and update notification
                     val progress = ((downloadedBytes * 100) / totalBytes).toInt()
-                    setForeground(createForegroundInfo(progress))
+                    safelySetForeground(createForegroundInfo(progress))
                     setProgress(workDataOf(PROGRESS to progress))
                 }
             }
@@ -134,7 +140,7 @@ class ImageDownloadWorker(
 
                 // Calculate progress and update notification
                 val progress = ((downloadedBytes * 100) / totalBytes).toInt()
-                setForeground(createForegroundInfo(progress))
+                safelySetForeground(createForegroundInfo(progress))
                 setProgress(workDataOf(PROGRESS to progress))
             }
         }
@@ -159,6 +165,12 @@ class ImageDownloadWorker(
             description = "Shows download progress for images"
         }
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private suspend fun safelySetForeground(foregroundInfo: ForegroundInfo) {
+        if (isAppInForeground()) {
+            setForeground(foregroundInfo)
+        }
     }
 
     /**
@@ -204,6 +216,14 @@ class ImageDownloadWorker(
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(DOWNLOAD_COMPLETE_NOTIFICATION_ID, notification)
+        val uniqueNotificationId = System.currentTimeMillis().toInt()
+        notificationManager.notify(uniqueNotificationId, notification)
+    }
+
+    private fun isAppInForeground(): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcesses = activityManager.runningAppProcesses ?: return false
+        val packageName = context.packageName
+        return appProcesses.any { it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && it.processName == packageName }
     }
 }

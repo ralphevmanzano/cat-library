@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.transformLatest
 
-// Designed and developed by skydoves (Jaewoong Eum)
-public class OnetimeWhileSubscribed(
+/**
+ * A [SharingStarted] strategy that starts sharing once there is at least one subscriber and stops
+ */
+class OnetimeWhileSubscribed(
     private val stopTimeout: Long,
     private val replayExpiration: Long = Long.MAX_VALUE,
 ) : SharingStarted {

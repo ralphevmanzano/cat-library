@@ -1,14 +1,10 @@
 package com.ralphevmanzano.catlibrary.presentation.cat_details
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.domain.model.networking.DownloadStatus
-import com.ralphevmanzano.catlibrary.presentation.cat_details.components.IconWithText
+import com.ralphevmanzano.catlibrary.presentation.cat_details.components.CatDetailSection
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
@@ -84,7 +79,7 @@ fun CatDetailsScreen(
                 val message = (downloadStatus as DownloadStatus.Error).message
                 snackBarHostState.showSnackbar(
                     message = message,
-                    duration = SnackbarDuration.Long
+                    duration = SnackbarDuration.Short
                 )
             }
             else -> {  }
@@ -185,28 +180,10 @@ fun CatDetailsContent(
                         contentScale = ContentScale.FillWidth
                     )
 
-                    Surface(modifier = Modifier.fillMaxWidth()) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = catUi.description,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                                IconWithText(
-                                    id = R.drawable.ic_life,
-                                    contentDescription = stringResource(R.string.life_span),
-                                    text = catUi.lifeSpanFormatted
-                                )
-                                IconWithText(
-                                    id = R.drawable.ic_weight,
-                                    contentDescription = stringResource(R.string.weight),
-                                    text = catUi.weightFormatted
-                                )
-                            }
-                        }
-                    }
+                    CatDetailSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        catUi = catUi
+                    )
                 }
             }
         }

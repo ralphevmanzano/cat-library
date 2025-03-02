@@ -29,13 +29,13 @@ class CatListViewModel(private val getCatsUseCase: GetCatsUseCase) : ViewModel()
     private val _errorEvents = MutableSharedFlow<NetworkError>()
     val errorEvents = _errorEvents.asSharedFlow()
 
-    private fun getCats() {
+    fun getCats(isRefresh: Boolean = false) {
         viewModelScope.launch {
             _state.update {
                 it.copy(isLoading = true)
             }
 
-            getCatsUseCase().collect { result ->
+            getCatsUseCase.invoke(isRefresh).collect { result ->
                 result.onSuccess { cats ->
                     _state.update {
                         it.copy(isLoading = false, cats = cats)

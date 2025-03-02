@@ -82,7 +82,7 @@ class CatListViewModelTest {
             delay(1)
             emit(Result.Success(testCatList))
         }
-        coEvery { catRepository.getCats() } returns resultFlow
+        coEvery { catRepository.getCats(isRefresh) } returns resultFlow
 
         viewModel = CatListViewModel(getCatsUseCase)
 
@@ -102,7 +102,7 @@ class CatListViewModelTest {
         assertEquals(CatListState(isLoading = true), stateCollector[1])
         assertEquals(CatListState(isLoading = false, cats = testCatList.map { it.toCatUi() }), stateCollector.last())
 
-        coVerify { catRepository.getCats() }
+        coVerify { catRepository.getCats(isRefresh) }
     }
 
     @Test
@@ -113,7 +113,7 @@ class CatListViewModelTest {
             delay(1)
             emit(Result.Error(networkError))
         }
-        coEvery { catRepository.getCats() } returns resultFlow
+        coEvery { catRepository.getCats(isRefresh) } returns resultFlow
 
         viewModel = CatListViewModel(getCatsUseCase)
 
@@ -141,6 +141,6 @@ class CatListViewModelTest {
         assertEquals(1, errorCollector.size)
         assertEquals(networkError, errorCollector.first())
 
-        coVerify { catRepository.getCats() }
+        coVerify { catRepository.getCats(isRefresh) }
     }
 }

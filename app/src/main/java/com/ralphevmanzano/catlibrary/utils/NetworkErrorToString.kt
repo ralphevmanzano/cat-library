@@ -4,6 +4,9 @@ import android.content.Context
 import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.domain.model.networking.NetworkError
 
+/**
+ * Converts a [NetworkError] to a string for display to the user.
+ */
 fun NetworkError.toString(context: Context): String {
     return when (this) {
         is NetworkError.NotFound -> this.message

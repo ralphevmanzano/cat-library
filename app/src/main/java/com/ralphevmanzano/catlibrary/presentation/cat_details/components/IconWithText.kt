@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ralphevmanzano.catlibrary.R
+import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 
 @Composable
 fun IconWithText(
@@ -31,6 +34,18 @@ fun IconWithText(
         )
         Text(
             text = text
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun IconWithTextPreview() {
+    CatLibraryTheme {
+        IconWithText(
+            id = R.drawable.ic_life,
+            contentDescription = "Life span",
+            text = "10 - 12 years"
         )
     }
 }

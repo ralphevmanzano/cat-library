@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,7 +50,6 @@ fun CatListScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
 
-
     ObserveAsEvents(events = viewModel.errorEvents) {
         snackBarHostState.showSnackbar(
             message = it.toString(context),
@@ -61,7 +61,8 @@ fun CatListScreen(
         modifier = modifier,
         state = state,
         snackBarHostState = snackBarHostState,
-        onNavigateToCatDetail = onNavigateToCatDetail
+        onNavigateToCatDetail = onNavigateToCatDetail,
+        onRefresh = { viewModel.getCats(true) }
     )
 }
 
@@ -71,7 +72,8 @@ fun CatListContent(
     modifier: Modifier = Modifier,
     state: CatListState,
     snackBarHostState: SnackbarHostState,
-    onNavigateToCatDetail: (String) -> Unit
+    onNavigateToCatDetail: (String) -> Unit,
+    onRefresh: () -> Unit
 ) {
     val gridState = rememberLazyStaggeredGridState()
     val pullToRefreshState = rememberPullToRefreshState()
@@ -91,20 +93,25 @@ fun CatListContent(
             if (state.isLoading && state.cats.isEmpty()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.cats.isNotEmpty()) {
-
-                LazyVerticalStaggeredGrid(
-                    state = gridState,
-                    columns = StaggeredGridCells.Fixed(2),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                PullToRefreshBox(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isLoading,
+                    onRefresh = { onRefresh() }
                 ) {
-                    items(items = state.cats, key = { it.id }) { cat ->
-                        CatListItem(
-                            catUi = cat,
-                            onItemClick = { onNavigateToCatDetail(cat.id) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    LazyVerticalStaggeredGrid(
+                        state = gridState,
+                        columns = StaggeredGridCells.Fixed(2),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalItemSpacing = 16.dp,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        items(items = state.cats, key = { it.id }) { cat ->
+                            CatListItem(
+                                catUi = cat,
+                                onItemClick = { onNavigateToCatDetail(cat.id) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
@@ -122,13 +129,13 @@ private fun CatListContentPreview() {
                 cats = (1..10).map {
                     previewCat.copy(
                         id = it.toString(),
-                        imageWidth = Random.nextInt().coerceIn(200, 500),
-                        imageHeight = Random.nextInt().coerceIn(200, 500),
+                        imageAspectRatio = Random.nextFloat().coerceIn(0.5f, 2f),
                     )
                 }
             ),
             snackBarHostState = SnackbarHostState(),
-            onNavigateToCatDetail = {}
+            onNavigateToCatDetail = {},
+            onRefresh = {}
         )
     }
 }

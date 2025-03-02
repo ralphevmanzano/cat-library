@@ -1,9 +1,9 @@
 package com.ralphevmanzano.catlibrary.presentation.model
 
+import androidx.compose.runtime.Immutable
 import com.ralphevmanzano.catlibrary.domain.model.Cat
-import kotlinx.serialization.Serializable
 
-@Serializable
+@Immutable
 data class CatUi(
     val id: String,
     val name: String,
@@ -11,8 +11,7 @@ data class CatUi(
     val weightFormatted: String,
     val lifeSpanFormatted: String,
     val imageUrl: String,
-    val imageWidth: Int,
-    val imageHeight: Int
+    val imageAspectRatio: Float = 1f,
 )
 
 fun Cat.toCatUi(): CatUi {
@@ -23,7 +22,6 @@ fun Cat.toCatUi(): CatUi {
         weightFormatted = "$weight kg",
         lifeSpanFormatted = "$lifeSpan yrs",
         imageUrl = imageUrl,
-        imageWidth = imageWidth,
-        imageHeight = imageHeight,
+        imageAspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
     )
 }

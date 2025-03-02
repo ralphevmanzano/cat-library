@@ -1,6 +1,5 @@
 package com.ralphevmanzano.catlibrary.data.remote.dto
 
-import com.ralphevmanzano.catlibrary.domain.model.Cat
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

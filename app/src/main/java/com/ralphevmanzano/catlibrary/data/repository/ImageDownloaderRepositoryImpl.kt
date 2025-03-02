@@ -58,24 +58,16 @@ class ImageDownloaderRepositoryImpl(
             downloadRequest
         )
 
-        return merge(
-            workManager.getWorkInfoByIdFlow(downloadRequest.id)
-                .map { workInfo ->
-                    val progress = workInfo?.progress?.getInt(ImageDownloadWorker.PROGRESS, 0) ?: 0
-                    DownloadStatus.Downloading(progress)
-                },
-            workManager.getWorkInfoByIdFlow(downloadRequest.id)
-                .map { workInfo ->
-                    when (workInfo?.state) {
-                        WorkInfo.State.SUCCEEDED -> DownloadStatus.Success(fileName)
-                        WorkInfo.State.FAILED -> DownloadStatus.Error("Download failed")
-                        WorkInfo.State.BLOCKED -> DownloadStatus.Blocked
-                        WorkInfo.State.CANCELLED -> DownloadStatus.Error("Download cancelled")
-                        WorkInfo.State.ENQUEUED -> DownloadStatus.Queued
-                        else -> null
-                    }
+        return workManager.getWorkInfoByIdFlow(downloadRequest.id)
+            .map { workInfo ->
+                val progress = workInfo?.progress?.getInt(ImageDownloadWorker.PROGRESS, 0) ?: 0
+                when (workInfo?.state) {
+                    WorkInfo.State.SUCCEEDED -> DownloadStatus.Success(fileName)
+                    WorkInfo.State.FAILED -> DownloadStatus.Error("Download failed")
+                    WorkInfo.State.RUNNING -> DownloadStatus.Downloading(progress)
+                    else -> null
                 }
-                .filterNotNull()
-        )
+            }
+            .filterNotNull()
     }
 }

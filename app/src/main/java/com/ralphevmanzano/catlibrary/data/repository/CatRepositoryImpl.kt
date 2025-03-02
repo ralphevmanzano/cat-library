@@ -16,10 +16,12 @@ class CatRepositoryImpl(
     private val localDataSource: CatLocalDataSource
 ): CatRepository {
 
-    override suspend fun getCats(): Flow<Result<List<Cat>, NetworkError>> = flow {
-        val localCats = localDataSource.getCats()
-        if (localCats.isNotEmpty()) {
-            emit(Result.Success(localCats.map { it.toCat() }))
+    override suspend fun getCats(isRefresh: Boolean): Flow<Result<List<Cat>, NetworkError>> = flow {
+        if (!isRefresh) {
+            val localCats = localDataSource.getCats()
+            if (localCats.isNotEmpty()) {
+                emit(Result.Success(localCats.map { it.toCat() }))
+            }
         }
 
         val remoteResult = remoteDataSource.getCats()
@@ -27,8 +29,9 @@ class CatRepositoryImpl(
             localDataSource.deleteCats()
             localDataSource.insertCats(remoteResult.data.map { it.toCatEntity() })
             emit(remoteResult)
+        } else {
+            emit(remoteResult)
         }
-        emit(remoteResult)
     }
 
     override suspend fun getCatDetails(id: String): Flow<Result<Cat, NetworkError>> = flow {
@@ -39,9 +42,18 @@ class CatRepositoryImpl(
 
         val remoteResult = remoteDataSource.getCatDetails(id)
         if (remoteResult is Result.Success) {
-            localDataSource.insertCat(remoteResult.data.toCatEntity())
+            // Update local database with the latest details
+            // Exclude imageUrl and imageWidth and imageHeight as they are not part of the details API
+            val updatedCat = localCatDetails!!.copy(
+                name = remoteResult.data.name,
+                description = remoteResult.data.description,
+                weight = remoteResult.data.weight,
+                lifeSpan = remoteResult.data.lifeSpan,
+            )
+            localDataSource.insertCat(updatedCat)
+            emit(Result.Success(updatedCat.toCat()))
+        } else {
             emit(remoteResult)
         }
-        emit(remoteResult)
     }
 }

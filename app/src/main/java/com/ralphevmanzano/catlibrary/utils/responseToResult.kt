@@ -7,6 +7,10 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.Response
 
+/**
+ * Converts a [Response] to a [Result] with the success body or a [NetworkError].
+ * This function can be extended to handle more error codes and error messages as needed.
+ */
 inline fun <reified T> responseToResult(
     response: Response<T>
 ): Result<T, NetworkError> {
