@@ -55,7 +55,7 @@ class CatDetailsViewModel(
                     }
                 }.onError { error ->
                     _state.update {
-                        it.copy(isLoading = false, error = it.error)
+                        it.copy(isLoading = false)
                     }
                     _errorEvents.emit(error)
                 }

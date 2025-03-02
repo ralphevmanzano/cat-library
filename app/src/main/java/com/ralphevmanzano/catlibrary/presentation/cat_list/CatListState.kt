@@ -7,5 +7,4 @@ import com.ralphevmanzano.catlibrary.presentation.model.CatUi
 data class CatListState(
     val isLoading: Boolean = false,
     val cats: List<CatUi> = emptyList(),
-    val error: String? = null,
 )
