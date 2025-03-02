@@ -49,7 +49,7 @@ import com.ralphevmanzano.catlibrary.domain.model.networking.DownloadStatus
 import com.ralphevmanzano.catlibrary.presentation.cat_details.components.IconWithText
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
-import com.ralphevmanzano.catlibrary.utils.ObserveAsEvents
+import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
 import com.ralphevmanzano.catlibrary.utils.toString
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,7 +62,6 @@ fun CatDetailsScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val name by viewModel.catName.collectAsStateWithLifecycle()
     val downloadStatus by viewModel.downloadStatus.collectAsStateWithLifecycle()
 
     ObserveAsEvents(events = viewModel.errorEvents) {
@@ -96,7 +95,6 @@ fun CatDetailsScreen(
         modifier = modifier,
         state = state,
         snackBarHostState = snackBarHostState,
-        appBarTitle = name,
         onDownloadImage = {
             viewModel.downloadImage(state.cat?.imageUrl ?: "")
         },
@@ -110,7 +108,6 @@ fun CatDetailsContent(
     modifier: Modifier = Modifier,
     state: CatDetailsState,
     snackBarHostState: SnackbarHostState,
-    appBarTitle: String,
     onDownloadImage: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -127,7 +124,7 @@ fun CatDetailsContent(
             ) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
-                    title = { Text(text = appBarTitle, color = Color.White) },
+                    title = { Text(text = catUi?.name.orEmpty(), color = Color.White) },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
@@ -223,7 +220,6 @@ private fun CatDetailsScreenPreview() {
         CatDetailsContent(
             modifier = Modifier.fillMaxSize(),
             state = CatDetailsState(isLoading = false, cat = previewCat),
-            appBarTitle = previewCat.name,
             snackBarHostState = SnackbarHostState(),
             onDownloadImage = {},
             onNavigateBack = {}

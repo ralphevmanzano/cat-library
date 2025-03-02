@@ -20,8 +20,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,9 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.CatListItem
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
-import com.ralphevmanzano.catlibrary.presentation.model.CatUi
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
-import com.ralphevmanzano.catlibrary.utils.ObserveAsEvents
+import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
 import com.ralphevmanzano.catlibrary.utils.toString
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
@@ -43,11 +42,13 @@ import kotlin.random.Random
 fun CatListScreen(
     modifier: Modifier = Modifier,
     viewModel: CatListViewModel = koinViewModel(),
-    onNavigateToCatDetail: (CatUi) -> Unit
+    onNavigateToCatDetail: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
+
 
     ObserveAsEvents(events = viewModel.errorEvents) {
         snackBarHostState.showSnackbar(
@@ -70,9 +71,10 @@ fun CatListContent(
     modifier: Modifier = Modifier,
     state: CatListState,
     snackBarHostState: SnackbarHostState,
-    onNavigateToCatDetail: (CatUi) -> Unit
+    onNavigateToCatDetail: (String) -> Unit
 ) {
     val gridState = rememberLazyStaggeredGridState()
+    val pullToRefreshState = rememberPullToRefreshState()
 
     Scaffold(
         modifier = modifier,
@@ -89,6 +91,7 @@ fun CatListContent(
             if (state.isLoading && state.cats.isEmpty()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.cats.isNotEmpty()) {
+
                 LazyVerticalStaggeredGrid(
                     state = gridState,
                     columns = StaggeredGridCells.Fixed(2),
@@ -99,7 +102,7 @@ fun CatListContent(
                     items(items = state.cats, key = { it.id }) { cat ->
                         CatListItem(
                             catUi = cat,
-                            onItemClick = { onNavigateToCatDetail(cat) },
+                            onItemClick = { onNavigateToCatDetail(cat.id) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -119,7 +122,8 @@ private fun CatListContentPreview() {
                 cats = (1..10).map {
                     previewCat.copy(
                         id = it.toString(),
-                        imageAspectRatio = Random.nextFloat().coerceIn(0.5f, 1f)
+                        imageWidth = Random.nextInt().coerceIn(200, 500),
+                        imageHeight = Random.nextInt().coerceIn(200, 500),
                     )
                 }
             ),

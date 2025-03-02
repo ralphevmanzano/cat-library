@@ -48,7 +48,7 @@ fun SetupNavGraph(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToCatDetail = {
                     navController.navigate(
-                        Screen.CatDetails(it.id, it.name)
+                        Screen.CatDetails(it)
                     )
                 }
             )

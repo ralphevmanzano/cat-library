@@ -11,7 +11,8 @@ data class CatUi(
     val weightFormatted: String,
     val lifeSpanFormatted: String,
     val imageUrl: String,
-    val imageAspectRatio: Float,
+    val imageWidth: Int,
+    val imageHeight: Int
 )
 
 fun Cat.toCatUi(): CatUi {
@@ -22,6 +23,7 @@ fun Cat.toCatUi(): CatUi {
         weightFormatted = "$weight kg",
         lifeSpanFormatted = "$lifeSpan yrs",
         imageUrl = imageUrl,
-        imageAspectRatio = imageWidth.toFloat() / imageHeight.toFloat()
+        imageWidth = imageWidth,
+        imageHeight = imageHeight,
     )
 }

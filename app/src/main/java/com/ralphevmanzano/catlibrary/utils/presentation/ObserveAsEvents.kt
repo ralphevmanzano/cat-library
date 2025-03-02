@@ -1,4 +1,4 @@
-package com.ralphevmanzano.catlibrary.utils
+package com.ralphevmanzano.catlibrary.utils.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,6 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
+/**
+ * Observe a Flow<T> as events, collecting the flow in the lifecycle of the current
+ * [LocalLifecycleOwner] and launching the collection in the [Dispatchers.Main.immediate] context.
+ */
 @Composable
 fun <T> ObserveAsEvents(
     events: Flow<T>,

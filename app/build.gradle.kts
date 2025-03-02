@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
 }
 
 android {
@@ -61,6 +62,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 configurations {
@@ -89,6 +91,8 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
 
     implementation(libs.bundles.room)
+    ksp(libs.androidx.room.compiler)
+
     implementation(libs.androidx.work)
 
     implementation(libs.bundles.coil)

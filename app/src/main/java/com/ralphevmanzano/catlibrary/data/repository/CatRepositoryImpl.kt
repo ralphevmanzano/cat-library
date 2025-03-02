@@ -36,6 +36,12 @@ class CatRepositoryImpl(
         if (localCatDetails != null) {
             emit(Result.Success(localCatDetails.toCat()))
         }
-        emit(Result.Error(NetworkError.Unknown))
+
+        val remoteResult = remoteDataSource.getCatDetails(id)
+        if (remoteResult is Result.Success) {
+            localDataSource.insertCat(remoteResult.data.toCatEntity())
+            emit(remoteResult)
+        }
+        emit(remoteResult)
     }
 }

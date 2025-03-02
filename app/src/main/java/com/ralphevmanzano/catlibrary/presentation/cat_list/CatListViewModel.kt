@@ -6,25 +6,23 @@ import com.ralphevmanzano.catlibrary.domain.model.networking.NetworkError
 import com.ralphevmanzano.catlibrary.domain.model.networking.onError
 import com.ralphevmanzano.catlibrary.domain.model.networking.onSuccess
 import com.ralphevmanzano.catlibrary.domain.usecase.GetCatsUseCase
+import com.ralphevmanzano.catlibrary.utils.presentation.OnetimeWhileSubscribed
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CatListViewModel(
-    private val getCatsUseCase: GetCatsUseCase
-) : ViewModel() {
+class CatListViewModel(private val getCatsUseCase: GetCatsUseCase) : ViewModel() {
 
     private val _state = MutableStateFlow(CatListState())
     val state = _state
         .onStart { getCats() }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            OnetimeWhileSubscribed(5000),
             CatListState()
         )
 
@@ -37,20 +35,18 @@ class CatListViewModel(
                 it.copy(isLoading = true)
             }
 
-            getCatsUseCase()
-                .collect { result ->
-                    result.onSuccess { cats ->
-                        _state.update {
-                            it.copy(isLoading = false, cats = cats)
-                        }
-                    }.onError { error ->
-                        _state.update {
-                            it.copy(isLoading = false, error = it.error)
-                        }
-                        _errorEvents.emit(error)
+            getCatsUseCase().collect { result ->
+                result.onSuccess { cats ->
+                    _state.update {
+                        it.copy(isLoading = false, cats = cats)
                     }
+                }.onError { error ->
+                    _state.update {
+                        it.copy(isLoading = false, error = it.error)
+                    }
+                    _errorEvents.emit(error)
                 }
-
+            }
         }
     }
 }

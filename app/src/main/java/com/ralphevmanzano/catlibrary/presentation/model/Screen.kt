@@ -8,5 +8,5 @@ sealed interface Screen {
     data object CatList : Screen
 
     @Serializable
-    data class CatDetails(val catId: String, val catName: String) : Screen
+    data class CatDetails(val catId: String) : Screen
 }
