@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,6 +72,7 @@ fun CatListContent(
     snackBarHostState: SnackbarHostState,
     onNavigateToCatDetail: (CatUi) -> Unit
 ) {
+    val gridState = rememberLazyStaggeredGridState()
 
     Scaffold(
         modifier = modifier,
@@ -87,12 +90,13 @@ fun CatListContent(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.cats.isNotEmpty()) {
                 LazyVerticalStaggeredGrid(
+                    state = gridState,
                     columns = StaggeredGridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
                     verticalItemSpacing = 16.dp,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    items(state.cats) { cat ->
+                    items(items = state.cats, key = { it.id }) { cat ->
                         CatListItem(
                             catUi = cat,
                             onItemClick = { onNavigateToCatDetail(cat) },

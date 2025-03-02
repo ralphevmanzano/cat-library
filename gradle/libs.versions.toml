@@ -46,6 +46,7 @@ androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.re
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
@@ -74,6 +75,7 @@ koin = [
     "koin-core",
     "koin-android",
     "koin-androidx-compose",
+    "koin-androidx-workmanager",
 ]
 retrofit = [
     "retrofit",
@@ -83,7 +85,6 @@ retrofit = [
 room = [
     "androidx-room-runtime",
     "androidx-room-ktx",
-    "androidx-room-compiler",
 ]
 coil = [
     "coil-compose",

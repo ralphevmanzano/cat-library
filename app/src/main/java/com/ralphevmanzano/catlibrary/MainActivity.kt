@@ -1,5 +1,7 @@
 package com.ralphevmanzano.catlibrary
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,20 +19,29 @@ import com.ralphevmanzano.catlibrary.presentation.model.Screen
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val NOTIFICATIONS_REQUEST_CODE = 100
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             CatLibraryTheme {
                 val navController = rememberNavController()
-                setupNavGraph(navController = navController)
+                SetupNavGraph(navController = navController)
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATIONS_REQUEST_CODE)
         }
     }
 }
 
 @Composable
-fun setupNavGraph(navController: NavHostController) {
+fun SetupNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.CatList) {
         composable<Screen.CatList> {
             CatListScreen(

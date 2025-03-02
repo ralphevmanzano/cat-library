@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.ralphevmanzano.catlibrary.R
+import com.ralphevmanzano.catlibrary.domain.model.networking.DownloadStatus
 import com.ralphevmanzano.catlibrary.presentation.cat_details.components.IconWithText
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
@@ -62,6 +63,7 @@ fun CatDetailsScreen(
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val name by viewModel.catName.collectAsStateWithLifecycle()
+    val downloadStatus by viewModel.downloadStatus.collectAsStateWithLifecycle()
 
     ObserveAsEvents(events = viewModel.errorEvents) {
         snackBarHostState.showSnackbar(
@@ -70,13 +72,33 @@ fun CatDetailsScreen(
         )
     }
 
+    LaunchedEffect(downloadStatus) {
+        when (downloadStatus) {
+            is DownloadStatus.Success -> {
+                val fileName = (downloadStatus as DownloadStatus.Success).fileName
+                snackBarHostState.showSnackbar(
+                    message = context.getString(R.string.image_saved, fileName),
+                    duration = SnackbarDuration.Short
+                )
+            }
+            is DownloadStatus.Error -> {
+                val message = (downloadStatus as DownloadStatus.Error).message
+                snackBarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Long
+                )
+            }
+            else -> {  }
+        }
+    }
+
     CatDetailsContent(
         modifier = modifier,
         state = state,
         snackBarHostState = snackBarHostState,
         appBarTitle = name,
         onDownloadImage = {
-            // TODO: Download image
+            viewModel.downloadImage(state.cat?.imageUrl ?: "")
         },
         onNavigateBack = onNavigateBack
     )
@@ -137,13 +159,8 @@ fun CatDetailsContent(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.save)) },
                         onClick = {
+                            optionsMenuExpanded = false
                             onDownloadImage()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.share)) },
-                        onClick = {
-                            // TODO: open share sheet
                         }
                     )
                 }

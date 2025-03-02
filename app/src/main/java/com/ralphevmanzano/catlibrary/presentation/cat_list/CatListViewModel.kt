@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class CatListViewModel(
     private val getCatsUseCase: GetCatsUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CatListState())
     val state = _state
@@ -38,17 +38,19 @@ class CatListViewModel(
             }
 
             getCatsUseCase()
-                .onSuccess { cats ->
-                    _state.update {
-                        it.copy(isLoading = false, cats = cats)
+                .collect { result ->
+                    result.onSuccess { cats ->
+                        _state.update {
+                            it.copy(isLoading = false, cats = cats)
+                        }
+                    }.onError { error ->
+                        _state.update {
+                            it.copy(isLoading = false, error = it.error)
+                        }
+                        _errorEvents.emit(error)
                     }
                 }
-                .onError { error ->
-                    _state.update {
-                        it.copy(isLoading = false, error = it.error)
-                    }
-                    _errorEvents.emit(error)
-                }
+
         }
     }
 }

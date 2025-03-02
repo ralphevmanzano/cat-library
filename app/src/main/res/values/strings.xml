@@ -9,4 +9,6 @@
     <string name="share">Share</string>
     <string name="life_span">Life span</string>
     <string name="weight">Weight</string>
+    <string name="image_saved">Image saved: %1$s</string>
+    <string name="download_complete">Download complete</string>
 </resources>
