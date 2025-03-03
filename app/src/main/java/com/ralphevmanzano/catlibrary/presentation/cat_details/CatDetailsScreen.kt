@@ -62,7 +62,7 @@ fun CatDetailsScreen(
     ObserveAsEvents(events = viewModel.errorEvents) {
         snackBarHostState.showSnackbar(
             message = it.toString(context),
-            duration = SnackbarDuration.Long
+            duration = SnackbarDuration.Short
         )
     }
 
@@ -91,7 +91,7 @@ fun CatDetailsScreen(
         state = state,
         snackBarHostState = snackBarHostState,
         onDownloadImage = {
-            viewModel.downloadImage(state.cat?.imageUrl ?: "")
+            viewModel.downloadImage(state.cat?.imageUrl.orEmpty())
         },
         onNavigateBack = onNavigateBack
     )
@@ -124,7 +124,7 @@ fun CatDetailsContent(
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.back),
                                 tint = Color.White
                             )
                         }
@@ -136,7 +136,7 @@ fun CatDetailsContent(
                             Icon(
                                 Icons.Default.MoreVert,
                                 tint = Color.White,
-                                contentDescription = "Download"
+                                contentDescription = stringResource(R.string.download)
                             )
                         }
                     }

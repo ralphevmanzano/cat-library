@@ -24,20 +24,30 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.CatListItem
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
 import com.ralphevmanzano.catlibrary.utils.toString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
+
+private const val REFRESH_ANIMATION_DURATION = 1000L
+private const val GRID_CELLS_COUNT = 2
 
 @Composable
 fun CatListScreen(
@@ -53,7 +63,7 @@ fun CatListScreen(
     ObserveAsEvents(events = viewModel.errorEvents) {
         snackBarHostState.showSnackbar(
             message = it.toString(context),
-            duration = SnackbarDuration.Long
+            duration = SnackbarDuration.Short
         )
     }
 
@@ -77,12 +87,14 @@ fun CatListContent(
 ) {
     val gridState = rememberLazyStaggeredGridState()
     val pullToRefreshState = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier,
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
-            TopAppBar(title = { Text(text = "Cat Library") })
+            TopAppBar(title = { Text(text = stringResource(R.string.cat_library)) })
         }
     ) { innerPadding ->
         Box(
@@ -95,12 +107,22 @@ fun CatListContent(
             } else if (state.cats.isNotEmpty()) {
                 PullToRefreshBox(
                     state = pullToRefreshState,
-                    isRefreshing = state.isLoading,
-                    onRefresh = { onRefresh() }
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        isRefreshing = true
+                        onRefresh()
+
+                        // Simulate refresh animation, as response is instant, the refresh animation
+                        // cannot be seen without this delay
+                        scope.launch {
+                            delay(REFRESH_ANIMATION_DURATION)
+                            isRefreshing = false
+                        }
+                    }
                 ) {
                     LazyVerticalStaggeredGrid(
                         state = gridState,
-                        columns = StaggeredGridCells.Fixed(2),
+                        columns = StaggeredGridCells.Fixed(GRID_CELLS_COUNT),
                         contentPadding = PaddingValues(16.dp),
                         verticalItemSpacing = 16.dp,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),

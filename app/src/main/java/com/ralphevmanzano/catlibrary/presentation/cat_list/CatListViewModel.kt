@@ -6,6 +6,7 @@ import com.ralphevmanzano.catlibrary.domain.model.networking.NetworkError
 import com.ralphevmanzano.catlibrary.domain.model.networking.onError
 import com.ralphevmanzano.catlibrary.domain.model.networking.onSuccess
 import com.ralphevmanzano.catlibrary.domain.usecase.GetCatsUseCase
+import com.ralphevmanzano.catlibrary.utils.Constants.STATE_FLOW_STOP_TIMEOUT
 import com.ralphevmanzano.catlibrary.utils.presentation.OnetimeWhileSubscribed
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ class CatListViewModel(private val getCatsUseCase: GetCatsUseCase) : ViewModel()
         .onStart { getCats() }
         .stateIn(
             viewModelScope,
-            OnetimeWhileSubscribed(5000),
+            OnetimeWhileSubscribed(STATE_FLOW_STOP_TIMEOUT),
             CatListState()
         )
 

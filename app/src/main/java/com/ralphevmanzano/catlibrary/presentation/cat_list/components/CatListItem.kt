@@ -32,6 +32,8 @@ import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.presentation.model.CatUi
 import kotlin.random.Random
 
+private const val IMAGE_SIZE = 300
+
 @Composable
 fun CatListItem(
     modifier: Modifier = Modifier,
@@ -48,33 +50,38 @@ fun CatListItem(
         onClick = { onItemClick(catUi) }
     ) {
         Column {
-            SubcomposeAsyncImage(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(catUi.imageAspectRatio),
-                model = ImageRequest.Builder(context)
-                    .data(catUi.imageUrl)
-                    .crossfade(true)
-                    .size(300)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                loading = {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(48.dp),
-                            painter = painterResource(id = R.drawable.ic_placeholder),
-                            contentDescription = null,
-                            tint = Color.LightGray
-                        )
-                    }
-                },
-                contentDescription = catUi.name,
-                contentScale = ContentScale.Crop
-            )
+                    .fillMaxWidth()
+                    .aspectRatio(catUi.imageAspectRatio)
+            ) {
+                SubcomposeAsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(context)
+                        .data(catUi.imageUrl)
+                        .crossfade(true)
+                        .size(IMAGE_SIZE)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .build(),
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(48.dp),
+                                painter = painterResource(id = R.drawable.ic_placeholder),
+                                contentDescription = null,
+                                tint = Color.LightGray
+                            )
+                        }
+                    },
+                    contentDescription = catUi.name,
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Surface(
                 modifier = Modifier

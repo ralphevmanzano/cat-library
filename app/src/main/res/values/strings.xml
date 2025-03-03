@@ -11,4 +11,7 @@
     <string name="weight">Weight</string>
     <string name="image_saved">Image saved: %1$s</string>
     <string name="download_complete">Download complete</string>
+    <string name="cat_library">Cat Library</string>
+    <string name="back">Back</string>
+    <string name="download">Download</string>
 </resources>

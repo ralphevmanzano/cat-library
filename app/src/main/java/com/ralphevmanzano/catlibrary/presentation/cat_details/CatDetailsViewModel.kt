@@ -9,6 +9,8 @@ import com.ralphevmanzano.catlibrary.domain.model.networking.onError
 import com.ralphevmanzano.catlibrary.domain.model.networking.onSuccess
 import com.ralphevmanzano.catlibrary.domain.usecase.DownloadImageUseCase
 import com.ralphevmanzano.catlibrary.domain.usecase.GetCatDetailsUseCase
+import com.ralphevmanzano.catlibrary.utils.Constants.KEY_CAT_ID
+import com.ralphevmanzano.catlibrary.utils.Constants.STATE_FLOW_STOP_TIMEOUT
 import com.ralphevmanzano.catlibrary.utils.presentation.OnetimeWhileSubscribed
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,14 +27,14 @@ class CatDetailsViewModel(
     private val downloadImageUseCase: DownloadImageUseCase
 ) : ViewModel() {
 
-    private val catId = savedStateHandle.get<String>("catId") ?: ""
+    private val catId = savedStateHandle.get<String>(KEY_CAT_ID).orEmpty()
 
     private val _state = MutableStateFlow(CatDetailsState())
     val state = _state
         .onStart { getCatDetails() }
         .stateIn(
             viewModelScope,
-            OnetimeWhileSubscribed(5000),
+            OnetimeWhileSubscribed(STATE_FLOW_STOP_TIMEOUT),
             CatDetailsState()
         )
 
