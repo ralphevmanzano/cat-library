@@ -29,7 +29,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.ralphevmanzano.catlibrary.R
-import com.ralphevmanzano.catlibrary.presentation.model.CatUi
+import com.ralphevmanzano.catlibrary.presentation.model.CatCardUi
 import kotlin.random.Random
 
 private const val IMAGE_SIZE = 300
@@ -37,8 +37,8 @@ private const val IMAGE_SIZE = 300
 @Composable
 fun CatListItem(
     modifier: Modifier = Modifier,
-    catUi: CatUi,
-    onItemClick: (CatUi) -> Unit
+    catCardUi: CatCardUi,
+    onItemClick: (CatCardUi) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -47,19 +47,19 @@ fun CatListItem(
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(4.dp),
-        onClick = { onItemClick(catUi) }
+        onClick = { onItemClick(catCardUi) }
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(catUi.imageAspectRatio)
+                    .aspectRatio(catCardUi.imageAspectRatio)
             ) {
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .fillMaxSize(),
                     model = ImageRequest.Builder(context)
-                        .data(catUi.imageUrl)
+                        .data(catCardUi.imageUrl)
                         .crossfade(true)
                         .size(IMAGE_SIZE)
                         .memoryCachePolicy(CachePolicy.ENABLED)
@@ -78,7 +78,7 @@ fun CatListItem(
                             )
                         }
                     },
-                    contentDescription = catUi.name,
+                    contentDescription = catCardUi.name,
                     contentScale = ContentScale.Crop
                 )
             }
@@ -90,7 +90,7 @@ fun CatListItem(
                 shape = RoundedCornerShape(4.dp)
             ) {
                 Text(
-                    text = catUi.name,
+                    text = catCardUi.name,
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(8.dp),
                     textAlign = TextAlign.Center
@@ -104,17 +104,14 @@ fun CatListItem(
 @Composable
 private fun CatListItemPreview() {
     CatListItem(
-        catUi = previewCat,
+        catCardUi = previewCatCardUi,
         onItemClick = {}
     )
 }
 
-internal val previewCat = CatUi(
+internal val previewCatCardUi = CatCardUi(
     id = "abys",
     name = "Abyssinian",
     imageUrl = "https://cdn2.thecatapi.com/images/MTYwNjQwMg.jpg",
     imageAspectRatio = Random.nextFloat().coerceIn(0.5f, 2f),
-    description = "The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.",
-    weightFormatted = "4 - 5 kg",
-    lifeSpanFormatted = "10 - 15 years",
 )

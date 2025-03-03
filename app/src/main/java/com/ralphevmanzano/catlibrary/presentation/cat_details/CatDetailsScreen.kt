@@ -41,8 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.domain.model.networking.DownloadStatus
-import com.ralphevmanzano.catlibrary.presentation.cat_details.components.CatDetailSection
-import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
+import com.ralphevmanzano.catlibrary.presentation.cat_details.components.CatDetailsContent
+import com.ralphevmanzano.catlibrary.presentation.cat_details.components.previewCatDetailsUi
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
 import com.ralphevmanzano.catlibrary.utils.toString
@@ -82,7 +82,9 @@ fun CatDetailsScreen(
                     duration = SnackbarDuration.Short
                 )
             }
-            else -> {  }
+            else -> {
+                // Do nothing
+            }
         }
     }
 
@@ -91,7 +93,7 @@ fun CatDetailsScreen(
         state = state,
         snackBarHostState = snackBarHostState,
         onDownloadImage = {
-            viewModel.downloadImage(state.cat?.imageUrl.orEmpty())
+            viewModel.downloadImage(state.catDetails?.imageUrl.orEmpty())
         },
         onNavigateBack = onNavigateBack
     )
@@ -106,7 +108,7 @@ fun CatDetailsContent(
     onDownloadImage: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val catUi = state.cat
+    val catDetails = state.catDetails
 
     var optionsMenuExpanded by remember { mutableStateOf(false) }
 
@@ -119,7 +121,7 @@ fun CatDetailsContent(
             ) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
-                    title = { Text(text = catUi?.name.orEmpty(), color = Color.White) },
+                    title = { Text(text = catDetails?.name.orEmpty(), color = Color.White) },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
@@ -165,24 +167,24 @@ fun CatDetailsContent(
                 .background(color = Color.Black)
                 .padding(innerPadding)
         ) {
-            if (state.isLoading && catUi == null) {
+            if (state.isLoading && catDetails == null) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
                 )
-            } else if (catUi != null) {
+            } else if (catDetails != null) {
                 Column {
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f),
-                        model = catUi.imageUrl,
-                        contentDescription = catUi.name,
+                        model = catDetails.imageUrl,
+                        contentDescription = catDetails.name,
                         contentScale = ContentScale.FillWidth
                     )
 
-                    CatDetailSection(
+                    CatDetailsContent(
                         modifier = Modifier.fillMaxWidth(),
-                        catUi = catUi
+                        catDetails = catDetails
                     )
                 }
             }
@@ -196,7 +198,7 @@ private fun CatDetailsScreenPreview() {
     CatLibraryTheme {
         CatDetailsContent(
             modifier = Modifier.fillMaxSize(),
-            state = CatDetailsState(isLoading = false, cat = previewCat),
+            state = CatDetailsState(isLoading = false, catDetails = previewCatDetailsUi),
             snackBarHostState = SnackbarHostState(),
             onDownloadImage = {},
             onNavigateBack = {}

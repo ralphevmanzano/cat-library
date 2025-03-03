@@ -53,7 +53,7 @@ class CatDetailsViewModel(
             getCatDetailsUseCase(catId).collect { result ->
                 result.onSuccess { cat ->
                     _state.update {
-                        it.copy(isLoading = false, cat = cat)
+                        it.copy(isLoading = false, catDetails = cat)
                     }
                 }.onError { error ->
                     _state.update {
@@ -68,7 +68,7 @@ class CatDetailsViewModel(
     fun downloadImage(imageUrl: String) {
         if (imageUrl.isBlank()) return
         viewModelScope.launch {
-            val cat = state.value.cat
+            val cat = state.value.catDetails
             val fileName = "${cat?.name ?: "cat"}_${System.currentTimeMillis()}.jpg"
 
             downloadImageUseCase(imageUrl, fileName)

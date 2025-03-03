@@ -9,6 +9,7 @@ import com.ralphevmanzano.catlibrary.domain.repository.CatRepository
 import com.ralphevmanzano.catlibrary.domain.repository.ImageDownloaderRepository
 import com.ralphevmanzano.catlibrary.domain.usecase.DownloadImageUseCase
 import com.ralphevmanzano.catlibrary.domain.usecase.GetCatDetailsUseCase
+import com.ralphevmanzano.catlibrary.presentation.model.toCatDetailsUi
 import com.ralphevmanzano.catlibrary.presentation.model.toCatUi
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -115,7 +116,7 @@ class CatDetailsViewModelTest {
         assertEquals(3, stateCollector.size)
         assertEquals(CatDetailsState(), stateCollector.first())
         assertEquals(CatDetailsState(isLoading = true), stateCollector[1])
-        assertEquals(CatDetailsState(isLoading = false, cat = testCat.toCatUi()), stateCollector.last())
+        assertEquals(CatDetailsState(isLoading = false, catDetails = testCat.toCatDetailsUi()), stateCollector.last())
 
         assertEquals(0, errorCollector.size)
 

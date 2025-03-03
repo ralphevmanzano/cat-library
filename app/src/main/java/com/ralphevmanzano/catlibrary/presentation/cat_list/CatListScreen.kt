@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ralphevmanzano.catlibrary.R
 import com.ralphevmanzano.catlibrary.presentation.cat_list.components.CatListItem
-import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCat
+import com.ralphevmanzano.catlibrary.presentation.cat_list.components.previewCatCardUi
 import com.ralphevmanzano.catlibrary.ui.theme.CatLibraryTheme
 import com.ralphevmanzano.catlibrary.utils.presentation.ObserveAsEvents
 import com.ralphevmanzano.catlibrary.utils.toString
@@ -129,7 +129,7 @@ fun CatListContent(
                     ) {
                         items(items = state.cats, key = { it.id }) { cat ->
                             CatListItem(
-                                catUi = cat,
+                                catCardUi = cat,
                                 onItemClick = { onNavigateToCatDetail(cat.id) },
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -149,7 +149,7 @@ private fun CatListContentPreview() {
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             state = CatListState(
                 cats = (1..10).map {
-                    previewCat.copy(
+                    previewCatCardUi.copy(
                         id = it.toString(),
                         imageAspectRatio = Random.nextFloat().coerceIn(0.5f, 2f),
                     )

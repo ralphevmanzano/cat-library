@@ -1,6 +1,5 @@
 package com.ralphevmanzano.catlibrary.data.local.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

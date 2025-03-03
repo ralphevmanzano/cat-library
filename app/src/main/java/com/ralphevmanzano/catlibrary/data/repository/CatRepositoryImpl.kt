@@ -42,8 +42,7 @@ class CatRepositoryImpl(
 
         val remoteResult = remoteDataSource.getCatDetails(id)
         if (remoteResult is Result.Success) {
-            // Update local database with the latest details
-            // Exclude imageUrl and imageWidth and imageHeight as they are not part of the details API
+            // Update local database with the latest details from remote
             val updatedCat = localCatDetails!!.copy(
                 name = remoteResult.data.name,
                 description = remoteResult.data.description,
