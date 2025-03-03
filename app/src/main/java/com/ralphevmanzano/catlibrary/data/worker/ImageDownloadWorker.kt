@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -190,7 +191,18 @@ class ImageDownloadWorker(
                     setContentText("$progress%")
                 }
 
-        return ForegroundInfo(DOWNLOAD_PROGRESS_NOTIFICATION_ID, notificationBuilder.build())
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                DOWNLOAD_PROGRESS_NOTIFICATION_ID,
+                notificationBuilder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                DOWNLOAD_PROGRESS_NOTIFICATION_ID,
+                notificationBuilder.build()
+            )
+        }
     }
 
     /**
